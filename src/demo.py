@@ -5,6 +5,8 @@ from geometry_msgs.msg  import Twist
 from turtlesim.msg import Pose
 from std_srvs.srv import Empty
 
+# Star coordinates
+points = ((6,9),(2,3),(5,6))
 
 # Class from which the turtle object will be instanced
 class turtlebot():
@@ -48,8 +50,8 @@ if __name__ == '__main__':
         # Instance a turtle objet       
         x = turtlebot()
 
-        x.move((6,9))
-        x.move((2,3))
-        x.move((5,6))
+        # Move the turtle object to each point
+        for p in points:
+            x.move(p)
 
     except rospy.ROSInterruptException: pass
