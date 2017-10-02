@@ -19,13 +19,20 @@ class turtlebot():
         self.pose = Pose()
         self.rate = rospy.Rate(10) # Refresh frequency [Hz]
 
-
     # Callback function formatting the pose value received
     def callback(self, data):
         self.pose = data
         self.pose.x = round(self.pose.x, 4)
         self.pose.y = round(self.pose.y, 4)
 
+    # Move the turtle to the specified point 
+    def move(self, point): # Receives a tuple with the point coordinates
+    	# Format the point coordinates
+        goal_pose = Pose()
+        goal_pose.x = point[0]
+        goal_pose.y = point[1]
+
+        print(goal_pose)
 
 
 if __name__ == '__main__':
@@ -41,5 +48,8 @@ if __name__ == '__main__':
         # Instance a turtle objet       
         x = turtlebot()
 
+        x.move((6,9))
+        x.move((2,3))
+        x.move((5,6))
 
     except rospy.ROSInterruptException: pass
