@@ -4,6 +4,8 @@ import rospy
 from geometry_msgs.msg  import Twist
 from turtlesim.msg import Pose
 from std_srvs.srv import Empty
+from math import pow,atan2,sqrt
+
 
 # Star coordinates
 points = ((6,9),(2,3),(5,6))
@@ -27,6 +29,16 @@ class turtlebot():
         self.pose.x = round(self.pose.x, 4)
         self.pose.y = round(self.pose.y, 4)
 
+    # Calculate the linear (euclidean) distance to the goal point
+    def get_linear_distance(self, goal_x, goal_y):
+        distance = sqrt(pow((goal_x - self.pose.x), 2) + pow((goal_y - self.pose.y), 2))
+        return distance
+
+    # Calculate the angular distance to the goal point
+    def get_angular_distance(self, goal_x, goal_y):
+        distance = atan2(goal_y - self.pose.y, goal_x - self.pose.x) - self.pose.theta
+        return distance
+
     # Move the turtle to the specified point 
     def move(self, point): # Receives a tuple with the point coordinates
     	# Format the point coordinates
@@ -34,8 +46,9 @@ class turtlebot():
         goal_pose.x = point[0]
         goal_pose.y = point[1]
 
-        print(goal_pose)
-
+        print("angular: %f" % self.get_angular_distance(goal_pose.x, goal_pose.y))
+        print("linear: %f" % self.get_linear_distance(goal_pose.x, goal_pose.y))
+        
 
 if __name__ == '__main__':
     try:
