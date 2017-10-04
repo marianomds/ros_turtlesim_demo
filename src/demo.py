@@ -6,10 +6,20 @@ from turtlesim.msg import Pose
 from std_srvs.srv import Empty
 from turtlesim.srv import TeleportAbsolute, SetPen
 from math import pow,atan2,sqrt
-
+import csv
 
 # Star coordinates
-points = ((4,2),(6.25,3.25),(9,2),(8.25,4.5),(10,6.25),(7.5,6.5),(6.25,9),(5.5,6.5),(3,6.25),(4.75,4.5),(4,2))
+starpoints = ((4,2),(6.25,3.25),(9,2),(8.25,4.5),(10,6.25),(7.5,6.5),(6.25,9),(5.5,6.5),(3,6.25),(4.75,4.5),(4,2))
+
+
+# Function for obtaining the coordinates of a custom figure from a csv file
+def getpoints(filename):
+    reader = csv.DictReader(open(filename), delimiter=',')
+    points = [] # The points' coordinates will be saved in a list of tuples
+    for row in reader:
+        points.append((ord(row['X']) - 48,ord(row['Y']) - 48)) # Each row has one point, whose coordinates are in a 'X' and a 'Y' column
+    return points
+
 
 # Class from which the turtle object will be instanced
 class turtlebot():
@@ -126,6 +136,14 @@ if __name__ == '__main__':
         rospy.wait_for_service('clear')
         clear = rospy.ServiceProxy('clear', Empty)
         clear()
+
+        # The turtle can either draw a star (with pre-specified coordinates) or a custom figure (with coordinates specified in a csv file)
+        ans = raw_input("Would you like turtlesim to draw a star (s) or some custom figure (f)?:")
+        if (ans == 's') or (ans == 'S'):
+            points = starpoints # Use the pre-specified star coordinates
+        elif (ans == 'f') or (ans == 'F'):
+            filename = rospy.get_param('~filename') # run the node with parameter: _filename:=full_path_filename
+            points = getpoints(filename) # Use the custom figure coordinates
 
         # Instance a turtle objet       
         x = turtlebot(points[0])
