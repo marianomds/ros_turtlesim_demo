@@ -8,7 +8,7 @@ from math import pow,atan2,sqrt
 
 
 # Star coordinates
-points = ((6,9),(2,3),(5,6))
+points = ((4,2),(6.25,3.25),(9,2),(8.25,4.5),(10,6.25),(7.5,6.5),(6.25,9),(5.5,6.5),(3,6.25),(4.75,4.5),(4,2))
 
 # Class from which the turtle object will be instanced
 class turtlebot():
