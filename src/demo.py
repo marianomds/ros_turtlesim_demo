@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg  import Twist
 from turtlesim.msg import Pose
 from std_srvs.srv import Empty
+from turtlesim.srv import TeleportAbsolute, SetPen
 from math import pow,atan2,sqrt
 
 
@@ -14,7 +15,7 @@ points = ((4,2),(6.25,3.25),(9,2),(8.25,4.5),(10,6.25),(7.5,6.5),(6.25,9),(5.5,6
 class turtlebot():
 
 	# Initialization funcion
-    def __init__(self):
+    def __init__(self, ini_point): # The init funcion receives the initial point for positioning the turtle
     	# Create the velocity publisher
         self.velocity_publisher = rospy.Publisher('turtle1/cmd_vel', Twist, queue_size=10)
 
@@ -22,6 +23,20 @@ class turtlebot():
         self.pose_subscriber = rospy.Subscriber('turtle1/pose', Pose, self.callback)
         self.pose = Pose()
         self.rate = rospy.Rate(10) # Refresh frequency [Hz]
+
+        # Turn off the pen
+        rospy.wait_for_service('turtle1/set_pen')
+        set_pen = rospy.ServiceProxy('turtle1/set_pen', SetPen)
+        set_pen(0,0,0,0,1)
+
+        # Move the turtle to the initial position
+        rospy.wait_for_service('turtle1/teleport_absolute')
+        teleport = rospy.ServiceProxy('turtle1/teleport_absolute', TeleportAbsolute)
+        teleport(ini_point[0],ini_point[1],0)
+
+        # Turn on the pen
+        set_pen(255,255,255,4,0)
+
 
     # Callback function formatting the pose value received
     def callback(self, data):
@@ -113,7 +128,7 @@ if __name__ == '__main__':
         clear()
 
         # Instance a turtle objet       
-        x = turtlebot()
+        x = turtlebot(points[0])
 
         # Move the turtle object to each point
         for p in points:
