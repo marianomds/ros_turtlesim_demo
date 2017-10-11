@@ -52,6 +52,14 @@ class turtlebot():
         # Create the velocity vector atribute
         self.vel_msg = Twist()
 
+        # Linear velocity only in the x-axis
+        self.vel_msg.linear.y = 0
+        self.vel_msg.linear.z = 0
+
+        # Angular velocity only in the z-axis
+        self.vel_msg.angular.x = 0
+        self.vel_msg.angular.y = 0
+
     # Callback function formatting the pose value received
     def callback(self, data):
         self.pose = data
@@ -75,14 +83,6 @@ class turtlebot():
         self.goal_pose.x = point[0]
         self.goal_pose.y = point[1]
 
-        # Linear velocity only in the x-axis
-        self.vel_msg.linear.y = 0
-        self.vel_msg.linear.z = 0
-
-        # Angular velocity only in the z-axis
-        self.vel_msg.angular.x = 0
-        self.vel_msg.angular.y = 0
-        
         # The turtle will first rotate => linear velocity = 0
         self.vel_msg.linear.x = 0
 
