@@ -46,6 +46,12 @@ class turtlebot():
         self.pose = Pose()
         self.rate = rospy.Rate(10) # Refresh frequency [Hz]
 
+        # Create the goal position vector atribute
+        self.goal_pose = Pose()
+
+        # Create the velocity vector atribute
+        self.vel_msg = Twist()
+
     # Callback function formatting the pose value received
     def callback(self, data):
         self.pose = data
@@ -64,13 +70,10 @@ class turtlebot():
 
     # Move the turtle to the specified point 
     def move(self, point): # Receives a tuple with the point coordinates
-    	# Format the point coordinates
-        goal_pose = Pose()
-        goal_pose.x = point[0]
-        goal_pose.y = point[1]
 
-        # Create the velocity vector atribute
-        self.vel_msg = Twist()
+    	# Save the goal point coordinates
+        self.goal_pose.x = point[0]
+        self.goal_pose.y = point[1]
 
         # Linear velocity only in the x-axis
         self.vel_msg.linear.y = 0
@@ -85,7 +88,7 @@ class turtlebot():
 
         # The loop will remain until the angular distance starts to increase again
         prev_angular_distance = 100
-        angular_distance = self.get_angular_distance(goal_pose.x, goal_pose.y)
+        angular_distance = self.get_angular_distance(self.goal_pose.x, self.goal_pose.y)
         while abs(angular_distance) <= abs(prev_angular_distance) and abs(angular_distance) > 0.001:
 
             # Porportional Controller
@@ -97,7 +100,7 @@ class turtlebot():
 
             # Re-calculate the distance
             prev_angular_distance = angular_distance
-            angular_distance = self.get_angular_distance(goal_pose.x, goal_pose.y)
+            angular_distance = self.get_angular_distance(self.goal_pose.x, self.goal_pose.y)
 
 
         # The turtle will now translate => angular velocity = 0
@@ -105,7 +108,7 @@ class turtlebot():
 
         # The loop will remain until the linear distance starts to increase again
         prev_linear_distance = 100
-        linear_distance = self.get_linear_distance(goal_pose.x, goal_pose.y)
+        linear_distance = self.get_linear_distance(self.goal_pose.x, self.goal_pose.y)
         while linear_distance <= prev_linear_distance and linear_distance != 0:
 
             # Porportional Controller
@@ -117,7 +120,7 @@ class turtlebot():
 
             # Re-calculate the distance
             prev_linear_distance = linear_distance
-            linear_distance = self.get_linear_distance(goal_pose.x, goal_pose.y)
+            linear_distance = self.get_linear_distance(self.goal_pose.x, self.goal_pose.y)
         
         # Stop turtle
         self.vel_msg.linear.x = 0
